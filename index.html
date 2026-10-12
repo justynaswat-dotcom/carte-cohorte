@@ -45,16 +45,18 @@
     min-width: 1.75em; height: 1.75em; padding: 0 .4em; margin-left: .35em; border-radius: 1em;
     background: var(--violet); color: #fff; font-size: 1.05em; letter-spacing: 0; vertical-align: middle;
   }
-  .encarts { position: absolute; left: 2%; bottom: 3%; z-index: 500; display: flex; gap: 1.2%; width: 30%; }
+  /* Encarts dimensionnés sur la HAUTEUR de la carte : jamais rognés, quelle
+     que soit la forme du cadre qui l'intègre. */
+  .encarts { position: absolute; left: 2%; bottom: 4%; height: 36%; z-index: 500; display: flex; gap: 10px; }
   .encart {
-    flex: 1; background: #fff; border: 1px solid #e3dff0; border-radius: 6px; overflow: hidden;
+    height: 100%; aspect-ratio: 0.88; display: flex; flex-direction: column; background: #fff; border: 1px solid #e3dff0; border-radius: 6px; overflow: hidden;
     box-shadow: 0 1px 4px rgba(0,0,0,.08);
   }
   .encart-titre {
     padding: 4px 6px; font-weight: 700; color: var(--label); text-transform: uppercase;
     font-size: clamp(7px, .8vw, 10px); letter-spacing: .5px; border-bottom: 1px solid #eee; white-space: nowrap;
   }
-  .encart-carte { aspect-ratio: 1 / 1; background: var(--fond); }
+  .encart-carte { flex: 1; min-height: 0; background: var(--fond); }
   .region-lien { cursor: pointer; }
   .encart { cursor: default; }
   .source {
@@ -149,10 +151,10 @@
     }
     return pts.map(pt => map.unproject(pt, zoom));
   }
-  function dessinerPoints(map, couche, liste) {
+  function dessinerPoints(map, couche, liste, tailleMin) {
     couche.clearLayers();
     // Taille du point proportionnelle à la largeur de la carte (lisible partout).
-    const taille = Math.max(7, Math.min(14, Math.round(map.getSize().x / 95)));
+    const taille = Math.max(tailleMin || 7, Math.min(14, Math.round(map.getSize().x / 95)));
     placer(map, liste, taille).forEach(ll => L.marker(ll, {
       interactive: false, keyboard: false,
       icon: L.divIcon({ className: '', html: '<div class="point"></div>', iconSize: [taille, taille], iconAnchor: [taille / 2, taille / 2] })
@@ -207,7 +209,8 @@
     encarts.push(() => {
       mini.invalidateSize();
       mini.fitBounds(forme.getBounds(), { padding: [6, 6], animate: false });
-      dessinerPoints(mini, couche, liste);
+      // Encarts : la carte de France vaut ~4 fois leur largeur → même taille de point.
+      dessinerPoints(mini, couche, liste, Math.max(8, Math.min(14, Math.round(map.getSize().x / 95))));
     });
   });
 
