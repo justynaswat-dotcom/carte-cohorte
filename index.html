@@ -93,8 +93,8 @@
     'Nouvelle-Aquitaine': [45.35, 0.1]
   };
   const OUTRE_MER = ['Guadeloupe', 'Martinique', 'Guyane', 'La Réunion', 'Mayotte'];
-  const STYLE_REGION = { color: '#00008B', weight: 0.8, fillColor: '#ffffff', fillOpacity: 1 };
-  const STYLE_SURVOL = { fillColor: '#ebe8e2', color: '#00008B', weight: 1.8 };
+  const STYLE_REGION = { color: '#00008B', weight: 1.4, fillColor: '#ffffff', fillOpacity: 1 };
+  const STYLE_SURVOL = { fillColor: '#ebe8e2', color: '#00008B', weight: 2.4 };
   const COUL_FOND = '#FAF6EE';
   // Masque « tout sauf le territoire » : un grand rectangle percé des formes du
   // territoire. Recouvre le relief qui déborde des frontières.
@@ -107,7 +107,7 @@
     m.getPane('masque').style.pointerEvents = 'none';
     L.polygon([outer, ...trous], { pane: 'masque', interactive: false, stroke: false, fillColor: COUL_FOND, fillOpacity: 1 }).addTo(m);
     // Trait de côte redessiné par-dessus le masque.
-    L.geoJSON(feature, { pane: 'masque', interactive: false, style: { color: '#00008B', weight: 0.8, fill: false } }).addTo(m);
+    L.geoJSON(feature, { pane: 'masque', interactive: false, style: { color: '#00008B', weight: 1.4, fill: false } }).addTo(m);
   }
   // Relief : estompage IGN (Géoplateforme, données ouvertes), limité au
   // territoire français — transparent partout ailleurs. Posé AU-DESSUS du fond
