@@ -15,10 +15,10 @@
   /* Carte publique : pas de zoom ni de déplacement. Seuls les contours de
      région sont cliquables (page des projets de la région sur le site ADEME). */
   :root {
-    --violet: #000000;
+    --violet: #00008B;
     --vert: #4A2B9E;
-    --trait: #000000;
-    --label: #000000;
+    --trait: #00008B;
+    --label: #00008B;
     --fond: #FAF6EE;
   }
   html, body { margin: 0; height: 100%; background: transparent; }
@@ -93,8 +93,8 @@
     'Nouvelle-Aquitaine': [45.35, 0.1]
   };
   const OUTRE_MER = ['Guadeloupe', 'Martinique', 'Guyane', 'La Réunion', 'Mayotte'];
-  const STYLE_REGION = { color: '#000000', weight: 0.8, fillColor: '#ffffff', fillOpacity: 1 };
-  const STYLE_SURVOL = { fillColor: '#ebe8e2', color: '#000000', weight: 1.8 };
+  const STYLE_REGION = { color: '#00008B', weight: 0.8, fillColor: '#ffffff', fillOpacity: 1 };
+  const STYLE_SURVOL = { fillColor: '#ebe8e2', color: '#00008B', weight: 1.8 };
   const COUL_FOND = '#FAF6EE';
   // Masque « tout sauf le territoire » : un grand rectangle percé des formes du
   // territoire. Recouvre le relief qui déborde des frontières.
@@ -107,7 +107,7 @@
     m.getPane('masque').style.pointerEvents = 'none';
     L.polygon([outer, ...trous], { pane: 'masque', interactive: false, stroke: false, fillColor: COUL_FOND, fillOpacity: 1 }).addTo(m);
     // Trait de côte redessiné par-dessus le masque.
-    L.geoJSON(feature, { pane: 'masque', interactive: false, style: { color: '#000000', weight: 0.8, fill: false } }).addTo(m);
+    L.geoJSON(feature, { pane: 'masque', interactive: false, style: { color: '#00008B', weight: 0.8, fill: false } }).addTo(m);
   }
   // Relief : estompage IGN (Géoplateforme, données ouvertes), limité au
   // territoire français — transparent partout ailleurs. Posé AU-DESSUS du fond
