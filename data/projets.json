@@ -1,0 +1,288 @@
+{
+ "titre": "Cohorte 2026 — projets territoriaux XD Textile Responsable",
+ "mise_a_jour": "2026-10-12",
+ "projets": [
+  {
+   "no": 1,
+   "lat": 47.0662,
+   "lng": -1.4712,
+   "region": "Pays de la Loire",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/1-angelik-living-lab/"
+  },
+  {
+   "no": 2,
+   "lat": 46.6708,
+   "lng": -1.4125,
+   "region": "Pays de la Loire",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/2-bon-habillement-solidaire-ess-vendee/"
+  },
+  {
+   "no": 3,
+   "lat": 50.631,
+   "lng": 3.0454,
+   "region": "Hauts-de-France",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/3-circular-fashion-week/"
+  },
+  {
+   "no": 4,
+   "lat": 45.9623,
+   "lng": -0.8781,
+   "region": "Nouvelle-Aquitaine",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/test-4-collectif-jaime-ma-laine/"
+  },
+  {
+   "no": 5,
+   "lat": 45.4302,
+   "lng": 4.37,
+   "region": "Auvergne-Rhône-Alpes",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/5-collectif-tresse-saint%C3%A9thique/"
+  },
+  {
+   "no": 6,
+   "lat": 48.9117,
+   "lng": 2.3334,
+   "region": "Île-de-France",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/6-collectivo/"
+  },
+  {
+   "no": 7,
+   "lat": 45.758,
+   "lng": 4.835,
+   "region": "Auvergne-Rhône-Alpes",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/test-7-desir-reemploi-solidaire/"
+  },
+  {
+   "no": 8,
+   "lat": 49.1536,
+   "lng": 5.8791,
+   "region": "Grand Est",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/test-8-dressing-mysongoriginal-3-0/"
+  },
+  {
+   "no": 9,
+   "lat": 47.332,
+   "lng": 5.0336,
+   "region": "Bourgogne-Franche-Comté",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/9-consortium-textile-bourgogne-franche-comte/"
+  },
+  {
+   "no": 10,
+   "lat": 46.5217,
+   "lng": 4.5969,
+   "region": "Bourgogne-Franche-Comté",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/10-le-fil-rouge/"
+  },
+  {
+   "no": 11,
+   "lat": 45.3781,
+   "lng": 5.5854,
+   "region": "Auvergne-Rhône-Alpes",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/11-fit-festin-textile/"
+  },
+  {
+   "no": 12,
+   "lat": 14.6478,
+   "lng": -61.0622,
+   "region": "Martinique",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/12-fibres-de-femmes/"
+  },
+  {
+   "no": 13,
+   "lat": 43.6105,
+   "lng": 3.8705,
+   "region": "Occitanie",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/13-frip-change/"
+  },
+  {
+   "no": 14,
+   "lat": 48.7895,
+   "lng": 2.3957,
+   "region": "Île-de-France",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/14-efc-au-service-du-textile-sur-le-territoire-du-grand-orly-seine-bi%C3%A8vre/"
+  },
+  {
+   "no": 15,
+   "lat": 16.1319,
+   "lng": -61.5847,
+   "region": "Guadeloupe",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/15-la-boucle-bleue/"
+  },
+  {
+   "no": 16,
+   "lat": 49.903,
+   "lng": 2.2926,
+   "region": "Hauts-de-France",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/16-la-boukle/"
+  },
+  {
+   "no": 17,
+   "lat": 45.758,
+   "lng": 4.835,
+   "region": "Auvergne-Rhône-Alpes",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/17-la-place-textile/"
+  },
+  {
+   "no": 18,
+   "lat": 49.4401,
+   "lng": 1.0939,
+   "region": "Normandie",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/18-la-trocante-mixcite/"
+  },
+  {
+   "no": 19,
+   "lat": 47.2394,
+   "lng": -1.5553,
+   "region": "Pays de la Loire",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/19-nouveaux-modeles-economiques/"
+  },
+  {
+   "no": 20,
+   "lat": 43.5647,
+   "lng": 4.0764,
+   "region": "Occitanie",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/20-ouimatter-textile/"
+  },
+  {
+   "no": 21,
+   "lat": 47.8474,
+   "lng": -4.0409,
+   "region": "Bretagne",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/21-pain-beurre-la-mode-engagee/"
+  },
+  {
+   "no": 22,
+   "lat": 46.1575,
+   "lng": -1.1706,
+   "region": "Nouvelle-Aquitaine",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/projet-1/"
+  },
+  {
+   "no": 23,
+   "lat": 48.8174,
+   "lng": 2.2941,
+   "region": "Île-de-France",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/23-maison-swap-by-e/"
+  },
+  {
+   "no": 24,
+   "lat": 48.8303,
+   "lng": 2.3656,
+   "region": "Île-de-France",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/24-refaire/"
+  },
+  {
+   "no": 25,
+   "lat": 47.2394,
+   "lng": -1.5553,
+   "region": "Pays de la Loire",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/25-reseau-de-lieux-et-de-ressources/"
+  },
+  {
+   "no": 26,
+   "lat": 43.2925,
+   "lng": 5.4006,
+   "region": "Provence-Alpes-Côte d'Azur",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/26-la-slow-fashion-week/"
+  },
+  {
+   "no": 27,
+   "lat": 48.4788,
+   "lng": -2.7499,
+   "region": "Bretagne",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/27-structurer-la-filiere-textile/"
+  },
+  {
+   "no": 28,
+   "lat": 46.2049,
+   "lng": 5.2411,
+   "region": "Auvergne-Rhône-Alpes",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/28-textile-360-ce-qui-est-collecte-ici-reste-ici/"
+  },
+  {
+   "no": 29,
+   "lat": 16.0446,
+   "lng": -61.5931,
+   "region": "Guadeloupe",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/29-textile-guadeloupe-2030/"
+  },
+  {
+   "no": 30,
+   "lat": 47.2394,
+   "lng": -1.5553,
+   "region": "Pays de la Loire",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/30-artefact-upcycling-hub-de-nantes/"
+  },
+  {
+   "no": 31,
+   "lat": 48.9035,
+   "lng": 2.3051,
+   "region": "Île-de-France",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/31-upcylook-labs/"
+  },
+  {
+   "no": 32,
+   "lat": 47.2394,
+   "lng": -1.5553,
+   "region": "Pays de la Loire",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/test-32-valone-repair-center/"
+  },
+  {
+   "no": 33,
+   "lat": 43.4885,
+   "lng": -1.4666,
+   "region": "Nouvelle-Aquitaine",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/33-virage/"
+  },
+  {
+   "no": 34,
+   "lat": 46.8044,
+   "lng": 1.693,
+   "region": "Centre-Val de Loire",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/34-fil-futur-berry/"
+  },
+  {
+   "no": 35,
+   "lat": 47.2394,
+   "lng": -1.5553,
+   "region": "Pays de la Loire",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/35-le-reseau-des-ecossolies/"
+  },
+  {
+   "no": 36,
+   "lat": 47.2394,
+   "lng": -1.5553,
+   "region": "Pays de la Loire",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/36-bons-solidaires-des-ecossolies/"
+  },
+  {
+   "no": 37,
+   "lat": 48.1916,
+   "lng": 3.2928,
+   "region": "Bourgogne-Franche-Comté",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/37-retex/"
+  },
+  {
+   "no": 38,
+   "lat": 43.6105,
+   "lng": 3.8705,
+   "region": "Occitanie",
+   "url": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/38-recyclocc-textile/"
+  }
+ ],
+ "pages_regions": {
+  "Auvergne-Rhône-Alpes": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/?tag=auvergne-rh%C3%B4ne-alpes#posts-list",
+  "Bourgogne-Franche-Comté": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/?tag=bourgogne-franche-comt%C3%A9#posts-list",
+  "Bretagne": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/?tag=bretagne#posts-list",
+  "Centre-Val de Loire": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/?tag=centre-val-de-loire#posts-list",
+  "Grand Est": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/?tag=grand-est#posts-list",
+  "Guadeloupe": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/?tag=guadeloupe#posts-list",
+  "Hauts-de-France": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/?tag=hauts-de-france#posts-list",
+  "Martinique": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/?tag=martinique#posts-list",
+  "Normandie": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/?tag=normandie#posts-list",
+  "Nouvelle-Aquitaine": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/?tag=nouvelle-aquitaine#posts-list",
+  "Occitanie": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/?tag=occitanie#posts-list",
+  "Pays de la Loire": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/?tag=pays-de-la-loire#posts-list",
+  "Provence-Alpes-Côte d'Azur": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/?tag=provence-alpes-c%C3%B4te-dazur#posts-list",
+  "Île-de-France": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/?tag=ile-de-france#posts-list"
+ }
+}

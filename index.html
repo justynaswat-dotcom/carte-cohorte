@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cohorte 2026 — XD Textile Responsable</title>
+<meta name="description" content="Carte des 38 projets territoriaux de la cohorte 2026 — Extrême Défi Textile Responsable (ADEME).">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  /* Carte publique : pas de zoom ni de déplacement. Seuls les contours de
+     région sont cliquables (page des projets de la région sur le site ADEME). */
+  :root {
+    --violet: #4A2B9E;
+    --vert: #2d9a5e;
+    --trait: #8f86b8;
+    --label: #7a6ba8;
+    --fond: #f6f5f9;
+  }
+  html, body { margin: 0; height: 100%; background: transparent; }
+  body { font-family: 'DM Sans', system-ui, sans-serif; }
+  .carte {
+    position: relative; width: 100%; aspect-ratio: 16 / 9; max-height: 100vh;
+    background: var(--fond); overflow: hidden; border-radius: 8px;
+    user-select: none; -webkit-user-select: none;
+  }
+  #map { position: absolute; inset: 0; background: transparent; }
+  .leaflet-container { background: transparent; font-family: inherit; }
+  .point {
+    width: 100%; height: 100%; box-sizing: border-box; border-radius: 50%;
+    background: var(--vert); border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3);
+  }
+  .region-label {
+    background: none; border: none; box-shadow: none; padding: 0;
+    color: var(--label); font-weight: 700; font-size: clamp(7px, .9vw, 11px);
+    letter-spacing: .5px; text-transform: uppercase; white-space: nowrap;
+  }
+  .region-label { position: absolute; transform: translate(-50%, -50%); }
+  .nb {
+    display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;
+    min-width: 1.75em; height: 1.75em; padding: 0 .4em; margin-left: .35em; border-radius: 1em;
+    background: var(--violet); color: #fff; font-size: 1.05em; letter-spacing: 0; vertical-align: middle;
+  }
+  .encarts { position: absolute; left: 2%; bottom: 3%; z-index: 500; display: flex; gap: 1.2%; width: 30%; }
+  .encart {
+    flex: 1; background: #fff; border: 1px solid #e3dff0; border-radius: 6px; overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  }
+  .encart-titre {
+    padding: 4px 6px; font-weight: 700; color: var(--label); text-transform: uppercase;
+    font-size: clamp(7px, .8vw, 10px); letter-spacing: .5px; border-bottom: 1px solid #eee; white-space: nowrap;
+  }
+  .encart-carte { aspect-ratio: 1 / 1; background: var(--fond); }
+  .region-lien { cursor: pointer; }
+  .encart { cursor: default; }
+  .source {
+    position: absolute; right: 1.5%; bottom: 2%; z-index: 500; color: #9c95b8;
+    font-size: clamp(7px, .7vw, 10px);
+  }
+</style>
+</head>
+<body>
+<div class="carte" id="carte" aria-label="Carte des 38 projets de la cohorte 2026 par région">
+  <div id="map"></div>
+  <div class="encarts" id="encarts"></div>
+  <div class="source">Contours : IGN · Etalab</div>
+</div>
+<script>
+(async function () {
+  'use strict';
+  const NOMS_COURTS = {
+    'Auvergne-Rhône-Alpes': 'Auvergne-R.-A.',
+    'Bourgogne-Franche-Comté': 'Bourgogne-F.-C.',
+    "Provence-Alpes-Côte d'Azur": 'PACA'
+  };
+  // Position des noms de région, choisie pour ne couvrir ni un point ni le nom
+  // d'une région voisine (par défaut : centre de la région).
+  const POS_ETIQUETTE = {
+    'Pays de la Loire': [47.78, -0.45],
+    'Centre-Val de Loire': [47.35, 1.75],
+    'Île-de-France': [48.42, 2.75],
+    'Auvergne-Rhône-Alpes': [45.15, 3.3],
+    'Hauts-de-France': [49.55, 2.75],
+    'Bretagne': [48.05, -2.95],
+    'Bourgogne-Franche-Comté': [47.68, 5.25],
+    'Nouvelle-Aquitaine': [45.35, 0.1]
+  };
+  const OUTRE_MER = ['Guadeloupe', 'Martinique', 'Guyane', 'La Réunion', 'Mayotte'];
+  const STYLE_REGION = { color: '#8f86b8', weight: 1.2, fillColor: '#ffffff', fillOpacity: 1 };
+  const STYLE_SURVOL = { fillColor: '#ece8f7', color: '#4A2B9E', weight: 2 };
+  const SANS_INTERACTION = {
+    zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false,
+    doubleClickZoom: false, boxZoom: false, keyboard: false, touchZoom: false, tap: false,
+    zoomSnap: 0, inertia: false
+  };
+
+  const [data, geo] = await Promise.all([
+    fetch('data/projets.json').then(r => r.json()),
+    fetch('data/regions.geojson').then(r => r.json())
+  ]);
+  const projets = data.projets;
+  const pagesRegions = data.pages_regions || {};
+  // Contour de région cliquable → page des projets de la région (fenêtre
+  // principale, la carte étant intégrée en iframe).
+  function rendreCliquable(layer, nom) {
+    const url = pagesRegions[nom];
+    if (!url) return;
+    layer.options.interactive = true;
+    layer.options.className = 'region-lien';
+    layer.on('mouseover', () => { layer.setStyle(STYLE_SURVOL); layer.bringToFront(); });
+    layer.on('mouseout', () => layer.setStyle(STYLE_REGION));
+    layer.on('click', () => { window.open(url, '_top'); });
+  }
+  const parRegion = {};
+  projets.forEach(p => { parRegion[p.region] = (parRegion[p.region] || 0) + 1; });
+
+  // Points au plus près de leur commune : les projets d'une même ville
+  // s'enroulent serrés autour de son point exact ; les chevauchements restants
+  // sont écartés juste assez, avec rappel vers la vraie position.
+  function placer(map, liste, taille) {
+    const gap = taille + 1;
+    const zoom = map.getZoom();
+    const cibles = liste.map(p => map.project(L.latLng(p.lat, p.lng), zoom));
+    const groupes = {};
+    liste.forEach((p, i) => { (groupes[p.lat + ',' + p.lng] = groupes[p.lat + ',' + p.lng] || []).push(i); });
+    const golden = Math.PI * (3 - Math.sqrt(5));
+    Object.values(groupes).forEach(idx => idx.forEach((i, rang) => {
+      const r = rang === 0 ? 0 : gap * 0.62 * Math.sqrt(rang + 0.6);
+      cibles[i] = L.point(cibles[i].x + Math.cos(rang * golden) * r, cibles[i].y + Math.sin(rang * golden) * r);
+    }));
+    const pts = cibles.map(c => L.point(c.x, c.y));
+    for (let passe = 0; passe < 60; passe++) {
+      let bouge = false;
+      for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
+        let dx = pts[j].x - pts[i].x, dy = pts[j].y - pts[i].y, d = Math.hypot(dx, dy);
+        if (d >= gap) continue;
+        if (d < 0.001) { dx = Math.cos(i + j); dy = Math.sin(i + j); d = 1; }
+        const k = (gap - d) / 2 + 0.3;
+        pts[i] = L.point(pts[i].x - dx / d * k, pts[i].y - dy / d * k);
+        pts[j] = L.point(pts[j].x + dx / d * k, pts[j].y + dy / d * k);
+        bouge = true;
+      }
+      if (!bouge) break;
+      for (let i = 0; i < pts.length; i++) pts[i] = L.point(pts[i].x + (cibles[i].x - pts[i].x) * 0.15, pts[i].y + (cibles[i].y - pts[i].y) * 0.15);
+    }
+    return pts.map(pt => map.unproject(pt, zoom));
+  }
+  function dessinerPoints(map, couche, liste) {
+    couche.clearLayers();
+    // Taille du point proportionnelle à la largeur de la carte (lisible partout).
+    const taille = Math.max(7, Math.min(14, Math.round(map.getSize().x / 95)));
+    placer(map, liste, taille).forEach(ll => L.marker(ll, {
+      interactive: false, keyboard: false,
+      icon: L.divIcon({ className: '', html: '<div class="point"></div>', iconSize: [taille, taille], iconAnchor: [taille / 2, taille / 2] })
+    }).addTo(couche));
+  }
+  function etiquette(nom) {
+    const n = parRegion[nom] || 0;
+    return (NOMS_COURTS[nom] || nom) + (n ? ` <span class="nb">${n}</span>` : '');
+  }
+
+  // ── Métropole ──────────────────────────────────────────────────────────────
+  const map = L.map('map', SANS_INTERACTION);
+  const metro = { type: 'FeatureCollection', features: geo.features.filter(f => !OUTRE_MER.includes(f.properties.nom)) };
+  const coucheMetro = L.geoJSON(metro, {
+    style: STYLE_REGION,
+    interactive: true,
+    onEachFeature: (f, l) => rendreCliquable(l, f.properties.nom)
+  }).addTo(map);
+  // Les noms de région passent sous les points (volet dédié, juste sous les marqueurs).
+  map.createPane('etiquettes').style.zIndex = 590;
+  coucheMetro.eachLayer(l => {
+    const nom = l.feature.properties.nom;
+    const pos = POS_ETIQUETTE[nom] ? L.latLng(POS_ETIQUETTE[nom]) : l.getBounds().getCenter();
+    L.marker(pos, {
+      interactive: false, keyboard: false, pane: 'etiquettes',
+      icon: L.divIcon({ className: '', iconSize: null, html: `<div class="region-label">${etiquette(nom)}</div>` })
+    }).addTo(map);
+  });
+  const points = L.layerGroup().addTo(map);
+  const projetsMetro = projets.filter(p => !OUTRE_MER.includes(p.region));
+  function cadrer() {
+    map.invalidateSize();
+    // Marge à gauche pour le titre et les encarts Outre-mer.
+    const w = map.getSize().x;
+    map.fitBounds(coucheMetro.getBounds(), { paddingTopLeft: [w * 0.12, 20], paddingBottomRight: [w * 0.04, 14], animate: false });
+    dessinerPoints(map, points, projetsMetro);
+  }
+
+  // ── Encarts Outre-mer (uniquement ceux qui ont des projets) ────────────────
+  const encarts = [];
+  OUTRE_MER.filter(nom => parRegion[nom]).forEach(nom => {
+    const feat = geo.features.find(f => f.properties.nom === nom);
+    if (!feat) return;
+    const box = document.createElement('div');
+    box.className = 'encart';
+    box.innerHTML = `<div class="encart-titre">${nom} <span class="nb">${parRegion[nom]}</span></div><div class="encart-carte"></div>`;
+    document.getElementById('encarts').appendChild(box);
+    const mini = L.map(box.querySelector('.encart-carte'), SANS_INTERACTION);
+    const forme = L.geoJSON(feat, { style: STYLE_REGION, interactive: true, onEachFeature: (f, l) => rendreCliquable(l, nom) }).addTo(mini);
+    const couche = L.layerGroup().addTo(mini);
+    const liste = projets.filter(p => p.region === nom);
+    encarts.push(() => {
+      mini.invalidateSize();
+      mini.fitBounds(forme.getBounds(), { padding: [6, 6], animate: false });
+      dessinerPoints(mini, couche, liste);
+    });
+  });
+
+  const tout = () => { cadrer(); encarts.forEach(f => f()); };
+  tout();
+  let t;
+  new ResizeObserver(() => { clearTimeout(t); t = setTimeout(tout, 120); }).observe(document.getElementById('carte'));
+})();
+</script>
+</body>
+</html>
