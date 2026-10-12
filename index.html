@@ -58,6 +58,15 @@
   }
   .encart-carte { flex: 1; min-height: 0; background: var(--fond); }
   .region-lien { cursor: pointer; }
+  /* Légende (coin haut gauche) */
+  .legende {
+    position: absolute; top: 4%; left: 2%; z-index: 500; background: #fff;
+    padding: .7em .9em; color: var(--label); font-size: clamp(8px, .95vw, 12px); line-height: 1.35;
+    display: grid; grid-template-columns: auto 1fr; gap: .45em .6em; align-items: center;
+  }
+  .legende .point { width: 1em; height: 1em; justify-self: center; }
+  .legende .nb { margin-left: 0; font-size: .95em; }
+  .legende-note { grid-column: 1 / -1; opacity: .85; padding-top: .15em; border-top: 1px solid #ebe8e2; }
   .leaflet-pane.leaflet-relief-pane { mix-blend-mode: multiply; }
   .encart { cursor: default; }
   .source {
@@ -69,6 +78,11 @@
 <body>
 <div class="carte" id="carte" aria-label="Carte des 38 projets de la cohorte 2026 par région">
   <div id="map"></div>
+  <div class="legende" aria-hidden="true">
+    <span class="point"></span><span>Projet de la cohorte 2026</span>
+    <span class="nb">8</span><span>Nombre de projets par région</span>
+    <span class="legende-note">Cliquez sur une région pour voir ses projets</span>
+  </div>
   <div class="encarts" id="encarts"></div>
   <div class="source">Relief et contours : IGN · Etalab</div>
 </div>
