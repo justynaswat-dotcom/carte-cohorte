@@ -58,6 +58,7 @@
   }
   .encart-carte { flex: 1; min-height: 0; background: var(--fond); }
   .region-lien { cursor: pointer; }
+  .leaflet-pane.leaflet-relief-pane { mix-blend-mode: multiply; }
   .encart { cursor: default; }
   .source {
     position: absolute; right: 1.5%; bottom: 2%; z-index: 500; color: #9c95b8;
@@ -69,7 +70,7 @@
 <div class="carte" id="carte" aria-label="Carte des 38 projets de la cohorte 2026 par région">
   <div id="map"></div>
   <div class="encarts" id="encarts"></div>
-  <div class="source">Contours : IGN · Etalab</div>
+  <div class="source">Relief et contours : IGN · Etalab</div>
 </div>
 <script>
 (async function () {
@@ -94,15 +95,41 @@
   const OUTRE_MER = ['Guadeloupe', 'Martinique', 'Guyane', 'La Réunion', 'Mayotte'];
   const STYLE_REGION = { color: '#8f86b8', weight: 1.2, fillColor: '#ffffff', fillOpacity: 1 };
   const STYLE_SURVOL = { fillColor: '#ece8f7', color: '#4A2B9E', weight: 2 };
+  const COUL_FOND = '#f6f5f9';
+  // Masque « tout sauf le territoire » : un grand rectangle percé des formes du
+  // territoire. Recouvre le relief qui déborde des frontières.
+  function masqueHors(m, feature, pad) {
+    const polys = feature.geometry.type === 'MultiPolygon' ? feature.geometry.coordinates : [feature.geometry.coordinates];
+    const b = L.geoJSON(feature).getBounds().pad(pad);
+    const outer = [[b.getSouth() - 20, b.getWest() - 40], [b.getNorth() + 20, b.getWest() - 40], [b.getNorth() + 20, b.getEast() + 40], [b.getSouth() - 20, b.getEast() + 40]];
+    const trous = polys.map(poly => poly[0].map(([lng, lat]) => [lat, lng]));
+    m.createPane('masque').style.zIndex = 455;
+    m.getPane('masque').style.pointerEvents = 'none';
+    L.polygon([outer, ...trous], { pane: 'masque', interactive: false, stroke: false, fillColor: COUL_FOND, fillOpacity: 1 }).addTo(m);
+    // Trait de côte redessiné par-dessus le masque.
+    L.geoJSON(feature, { pane: 'masque', interactive: false, style: { color: '#8f86b8', weight: 1.2, fill: false } }).addTo(m);
+  }
+  // Relief : estompage IGN (Géoplateforme, données ouvertes), limité au
+  // territoire français — transparent partout ailleurs. Posé AU-DESSUS du fond
+  // blanc des régions en mode « multiplier », sous les points et étiquettes.
+  function relief(m) {
+    m.createPane('relief');
+    const pane = m.getPane('relief');
+    pane.style.zIndex = 450;
+    pane.style.pointerEvents = 'none';
+    L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=ELEVATION.ELEVATIONGRIDCOVERAGE.SHADOW&STYLE=estompage_grayscale&TILEMATRIXSET=PM_0_15&FORMAT=image/png&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+      { pane: 'relief', maxNativeZoom: 15, maxZoom: 19, opacity: 0.75, className: 'relief' }).addTo(m);
+  }
   const SANS_INTERACTION = {
     zoomControl: false, attributionControl: false, dragging: false, scrollWheelZoom: false,
     doubleClickZoom: false, boxZoom: false, keyboard: false, touchZoom: false, tap: false,
     zoomSnap: 0, inertia: false
   };
 
-  const [data, geo] = await Promise.all([
+  const [data, geo, france] = await Promise.all([
     fetch('data/projets.json').then(r => r.json()),
-    fetch('data/regions.geojson').then(r => r.json())
+    fetch('data/regions.geojson').then(r => r.json()),
+    fetch('data/france.geojson').then(r => r.json())
   ]);
   const projets = data.projets;
   const pagesRegions = data.pages_regions || {};
@@ -167,12 +194,14 @@
 
   // ── Métropole ──────────────────────────────────────────────────────────────
   const map = L.map('map', SANS_INTERACTION);
+  relief(map);
   const metro = { type: 'FeatureCollection', features: geo.features.filter(f => !OUTRE_MER.includes(f.properties.nom)) };
   const coucheMetro = L.geoJSON(metro, {
     style: STYLE_REGION,
     interactive: true,
     onEachFeature: (f, l) => rendreCliquable(l, f.properties.nom)
   }).addTo(map);
+  masqueHors(map, france, 0.1);
   // Les noms de région passent sous les points (volet dédié, juste sous les marqueurs).
   map.createPane('etiquettes').style.zIndex = 590;
   coucheMetro.eachLayer(l => {
@@ -203,7 +232,9 @@
     box.innerHTML = `<div class="encart-titre">${nom} <span class="nb">${parRegion[nom]}</span></div><div class="encart-carte"></div>`;
     document.getElementById('encarts').appendChild(box);
     const mini = L.map(box.querySelector('.encart-carte'), SANS_INTERACTION);
+    relief(mini);
     const forme = L.geoJSON(feat, { style: STYLE_REGION, interactive: true, onEachFeature: (f, l) => rendreCliquable(l, nom) }).addTo(mini);
+    masqueHors(mini, feat, 0.5);
     const couche = L.layerGroup().addTo(mini);
     const liste = projets.filter(p => p.region === nom);
     encarts.push(() => {
