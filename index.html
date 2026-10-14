@@ -43,9 +43,8 @@
   .region-label { position: absolute; transform: translate(-50%, -50%); line-height: 1; }
   .region-label .nb { margin-left: 0; display: flex; }
   .region-label .rl-nom { position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); margin-bottom: .3em;
-    white-space: normal; width: max-content; max-width: 7.5em; text-align: center; line-height: 1.15;
+    white-space: nowrap; text-align: center; line-height: 1.15;
     text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 4px #fff; }
-  .region-label .rl-nom.rl-dessous { bottom: auto; top: 100%; margin-bottom: 0; margin-top: .3em; }
   .region-label .rl-seul { display: block; }
   .nb {
     display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;
@@ -102,7 +101,6 @@
     "Provence-Alpes-Côte d'Azur": 'PACA',
     'Île-de-France': 'IDF'   // région trop petite pour son nom complet sans déborder
   };
-  const NOM_DESSOUS = [];
   const OUTRE_MER = ['Guadeloupe', 'Martinique', 'Guyane', 'La Réunion', 'Mayotte'];
   const STYLE_REGION = { color: '#00008B', weight: 1.4, fillColor: '#ffffff', fillOpacity: 1 };
   const STYLE_SURVOL = { fillColor: '#ebe8e2', color: '#00008B', weight: 2.4 };
@@ -171,15 +169,18 @@
       icon: L.divIcon({ className: '', html: '<div class="point"></div>', iconSize: [taille, taille], iconAnchor: [taille / 2, taille / 2] })
     }).addTo(couche));
   }
-  // Le NOMBRE est posé sur un point intérieur à la région (data.ancres_regions,
-  // calculé loin des frontières et des points) ; le nom de la région au-dessus.
+  // Étiquette = nom (1 ou 2 lignes) + nombre. data.etiquettes_regions donne, pour
+  // chaque région, le point du NOMBRE et le libellé retenus par le calcul : là où
+  // l'étiquette entière a le plus de place, à l'intérieur de la région et loin des
+  // points (nom complet sur une ligne quand il tient).
+  const ETIQ = data.etiquettes_regions || {};
   function etiquette(nom) {
     const n = parRegion[nom] || 0;
-    const libelle = NOMS_COURTS[nom] || nom;
-    // Île-de-France : les points de Paris sont juste au-dessus du nombre → nom en dessous.
-    const dessous = NOM_DESSOUS.includes(nom) ? ' rl-dessous' : '';
-    return n ? `<span class="nb">${n}</span><span class="rl-nom${dessous}">${libelle}</span>` : `<span class="rl-seul">${libelle}</span>`;
+    const lignes = (ETIQ[nom] && ETIQ[nom].lignes) || [NOMS_COURTS[nom] || nom];
+    const libelle = lignes.map(e).join('<br>');
+    return n ? `<span class="nb">${n}</span><span class="rl-nom">${libelle}</span>` : `<span class="rl-seul">${libelle}</span>`;
   }
+  function e(t) { return String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]); }
 
   // ── Métropole ──────────────────────────────────────────────────────────────
   const map = L.map('map', SANS_INTERACTION);
@@ -195,7 +196,7 @@
   map.createPane('etiquettes').style.zIndex = 590;
   coucheMetro.eachLayer(l => {
     const nom = l.feature.properties.nom;
-    const a = (data.ancres_regions || {})[nom];
+    const a = ETIQ[nom] && ETIQ[nom].ancre;
     const pos = a ? L.latLng(a) : l.getBounds().getCenter();
     L.marker(pos, {
       interactive: false, keyboard: false, pane: 'etiquettes',

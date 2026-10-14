@@ -323,54 +323,118 @@
   "Provence-Alpes-Côte d'Azur": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/?tag=provence-alpes-c%C3%B4te-dazur#posts-list",
   "Île-de-France": "https://xdtextileresponsable.ademe.fr/projets-territoriaux-2026/?tag=%C3%AEle-de-france#posts-list"
  },
- "ancres_regions": {
-  "Île-de-France": [
-   48.632,
-   3.016
-  ],
-  "Centre-Val de Loire": [
-   47.727,
-   1.535
-  ],
-  "Bourgogne-Franche-Comté": [
-   47.267,
-   3.721
-  ],
-  "Normandie": [
-   48.872,
-   0.363
-  ],
-  "Hauts-de-France": [
-   49.739,
-   3.43
-  ],
-  "Grand Est": [
-   48.562,
-   4.739
-  ],
-  "Pays de la Loire": [
-   47.737,
-   -0.423
-  ],
-  "Bretagne": [
-   48.013,
-   -2.136
-  ],
-  "Nouvelle-Aquitaine": [
-   45.568,
-   0.826
-  ],
-  "Occitanie": [
-   43.474,
-   1.765
-  ],
-  "Auvergne-Rhône-Alpes": [
-   45.856,
-   3.283
-  ],
-  "Provence-Alpes-Côte d'Azur": [
-   43.928,
-   6.322
-  ]
+ "etiquettes_regions": {
+  "Île-de-France": {
+   "ancre": [
+    48.6,
+    2.847
+   ],
+   "lignes": [
+    "IDF"
+   ]
+  },
+  "Provence-Alpes-Côte d'Azur": {
+   "ancre": [
+    43.812,
+    6.35
+   ],
+   "lignes": [
+    "PACA"
+   ]
+  },
+  "Bretagne": {
+   "ancre": [
+    47.981,
+    -2.435
+   ],
+   "lignes": [
+    "BRETAGNE"
+   ]
+  },
+  "Normandie": {
+   "ancre": [
+    48.818,
+    -0.467
+   ],
+   "lignes": [
+    "NORMANDIE"
+   ]
+  },
+  "Pays de la Loire": {
+   "ancre": [
+    47.794,
+    -0.279
+   ],
+   "lignes": [
+    "PAYS DE",
+    "LA LOIRE"
+   ]
+  },
+  "Hauts-de-France": {
+   "ancre": [
+    49.752,
+    3.182
+   ],
+   "lignes": [
+    "HAUTS-DE-",
+    "FRANCE"
+   ]
+  },
+  "Centre-Val de Loire": {
+   "ancre": [
+    47.196,
+    1.733
+   ],
+   "lignes": [
+    "CENTRE-VAL",
+    "DE LOIRE"
+   ]
+  },
+  "Bourgogne-Franche-Comté": {
+   "ancre": [
+    46.845,
+    4.969
+   ],
+   "lignes": [
+    "BOURGOGNE-F.-C."
+   ]
+  },
+  "Grand Est": {
+   "ancre": [
+    48.493,
+    4.868
+   ],
+   "lignes": [
+    "GRAND EST"
+   ]
+  },
+  "Occitanie": {
+   "ancre": [
+    43.795,
+    2.313
+   ],
+   "lignes": [
+    "OCCITANIE"
+   ]
+  },
+  "Auvergne-Rhône-Alpes": {
+   "ancre": [
+    45.562,
+    5.823
+   ],
+   "lignes": [
+    "AUVERGNE-",
+    "RHÔNE-ALPES"
+   ]
+  },
+  "Nouvelle-Aquitaine": {
+   "ancre": [
+    45.672,
+    0.771
+   ],
+   "lignes": [
+    "NOUVELLE-AQUITAINE"
+   ]
+  }
  }
 }
