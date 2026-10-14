@@ -326,8 +326,8 @@
  "etiquettes_regions": {
   "Île-de-France": {
    "ancre": [
-    48.6,
-    2.847
+    48.547,
+    3.007
    ],
    "lignes": [
     "IDF"
@@ -344,8 +344,8 @@
   },
   "Bretagne": {
    "ancre": [
-    47.981,
-    -2.435
+    47.874,
+    -2.395
    ],
    "lignes": [
     "BRETAGNE"
@@ -372,8 +372,8 @@
   },
   "Hauts-de-France": {
    "ancre": [
-    49.752,
-    3.182
+    49.804,
+    3.342
    ],
    "lignes": [
     "HAUTS-DE-",
@@ -382,8 +382,8 @@
   },
   "Centre-Val de Loire": {
    "ancre": [
-    47.196,
-    1.733
+    47.467,
+    1.813
    ],
    "lignes": [
     "CENTRE-VAL",
@@ -392,17 +392,19 @@
   },
   "Bourgogne-Franche-Comté": {
    "ancre": [
-    46.845,
-    4.969
+    47.227,
+    3.889
    ],
    "lignes": [
-    "BOURGOGNE-F.-C."
+    "BOURGOGNE-",
+    "FRANCHE-",
+    "COMTÉ"
    ]
   },
   "Grand Est": {
    "ancre": [
-    48.493,
-    4.868
+    48.361,
+    4.828
    ],
    "lignes": [
     "GRAND EST"
@@ -410,8 +412,8 @@
   },
   "Occitanie": {
    "ancre": [
-    43.795,
-    2.313
+    43.069,
+    2.033
    ],
    "lignes": [
     "OCCITANIE"
@@ -419,17 +421,18 @@
   },
   "Auvergne-Rhône-Alpes": {
    "ancre": [
-    45.562,
-    5.823
+    45.169,
+    3.343
    ],
    "lignes": [
     "AUVERGNE-",
-    "RHÔNE-ALPES"
+    "RHÔNE-",
+    "ALPES"
    ]
   },
   "Nouvelle-Aquitaine": {
    "ancre": [
-    45.672,
+    45.364,
     0.771
    ],
    "lignes": [

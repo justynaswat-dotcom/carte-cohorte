@@ -36,7 +36,7 @@
   }
   .region-label {
     background: none; border: none; box-shadow: none; padding: 0;
-    color: var(--label); font-weight: 700; font-size: clamp(7px, .9vw, 11px);
+    color: var(--label); font-weight: 700; font-size: var(--taille-etiquette, 11px);
     letter-spacing: .5px; text-transform: uppercase; white-space: nowrap;
   }
   /* L'étiquette est centrée sur le NOMBRE ; le nom est posé au-dessus. */
@@ -207,6 +207,10 @@
   const projetsMetro = projets.filter(p => !OUTRE_MER.includes(p.region));
   function cadrer() {
     map.invalidateSize();
+    // Étiquettes proportionnelles à la largeur de la carte : leur emplacement a été
+    // calculé pour 11 px à 1450 px de large, la mise en page reste donc identique
+    // quelle que soit la taille du cadre qui intègre la carte.
+    document.documentElement.style.setProperty('--taille-etiquette', Math.max(5.5, Math.min(12, map.getSize().x * 11 / 1450)) + 'px');
     // Marge à gauche pour le titre et les encarts Outre-mer.
     const w = map.getSize().x;
     map.fitBounds(coucheMetro.getBounds(), { paddingTopLeft: [w * 0.12, 20], paddingBottomRight: [w * 0.04, 14], animate: false });
