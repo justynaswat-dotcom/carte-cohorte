@@ -39,7 +39,14 @@
     color: var(--label); font-weight: 700; font-size: clamp(7px, .9vw, 11px);
     letter-spacing: .5px; text-transform: uppercase; white-space: nowrap;
   }
-  .region-label { position: absolute; transform: translate(-50%, -50%); }
+  /* L'étiquette est centrée sur le NOMBRE ; le nom est posé au-dessus. */
+  .region-label { position: absolute; transform: translate(-50%, -50%); line-height: 1; }
+  .region-label .nb { margin-left: 0; display: flex; }
+  .region-label .rl-nom { position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); margin-bottom: .3em;
+    white-space: normal; width: max-content; max-width: 7.5em; text-align: center; line-height: 1.15;
+    text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 4px #fff; }
+  .region-label .rl-nom.rl-dessous { bottom: auto; top: 100%; margin-bottom: 0; margin-top: .3em; }
+  .region-label .rl-seul { display: block; }
   .nb {
     display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;
     min-width: 1.75em; height: 1.75em; padding: 0 .4em; margin-left: .35em; border-radius: 1em;
@@ -92,20 +99,10 @@
   const NOMS_COURTS = {
     'Auvergne-Rhône-Alpes': 'Auvergne-R.-A.',
     'Bourgogne-Franche-Comté': 'Bourgogne-F.-C.',
-    "Provence-Alpes-Côte d'Azur": 'PACA'
+    "Provence-Alpes-Côte d'Azur": 'PACA',
+    'Île-de-France': 'IDF'   // région trop petite pour son nom complet sans déborder
   };
-  // Position des noms de région, choisie pour ne couvrir ni un point ni le nom
-  // d'une région voisine (par défaut : centre de la région).
-  const POS_ETIQUETTE = {
-    'Pays de la Loire': [47.78, -0.45],
-    'Centre-Val de Loire': [47.35, 1.75],
-    'Île-de-France': [48.42, 2.75],
-    'Auvergne-Rhône-Alpes': [45.15, 3.3],
-    'Hauts-de-France': [49.55, 2.75],
-    'Bretagne': [48.05, -2.95],
-    'Bourgogne-Franche-Comté': [47.68, 5.25],
-    'Nouvelle-Aquitaine': [45.35, 0.1]
-  };
+  const NOM_DESSOUS = [];
   const OUTRE_MER = ['Guadeloupe', 'Martinique', 'Guyane', 'La Réunion', 'Mayotte'];
   const STYLE_REGION = { color: '#00008B', weight: 1.4, fillColor: '#ffffff', fillOpacity: 1 };
   const STYLE_SURVOL = { fillColor: '#ebe8e2', color: '#00008B', weight: 2.4 };
@@ -161,49 +158,27 @@
   const parRegion = {};
   projets.forEach(p => { parRegion[p.region] = (parRegion[p.region] || 0) + 1; });
 
-  // Points au plus près de leur commune : les projets d'une même ville
-  // s'enroulent serrés autour de son point exact ; les chevauchements restants
-  // sont écartés juste assez, avec rappel vers la vraie position.
-  function placer(map, liste, taille) {
-    const gap = taille + 1;
-    const zoom = map.getZoom();
-    const cibles = liste.map(p => map.project(L.latLng(p.lat, p.lng), zoom));
-    const groupes = {};
-    liste.forEach((p, i) => { (groupes[p.lat + ',' + p.lng] = groupes[p.lat + ',' + p.lng] || []).push(i); });
-    const golden = Math.PI * (3 - Math.sqrt(5));
-    Object.values(groupes).forEach(idx => idx.forEach((i, rang) => {
-      const r = rang === 0 ? 0 : gap * 0.62 * Math.sqrt(rang + 0.6);
-      cibles[i] = L.point(cibles[i].x + Math.cos(rang * golden) * r, cibles[i].y + Math.sin(rang * golden) * r);
-    }));
-    const pts = cibles.map(c => L.point(c.x, c.y));
-    for (let passe = 0; passe < 60; passe++) {
-      let bouge = false;
-      for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
-        let dx = pts[j].x - pts[i].x, dy = pts[j].y - pts[i].y, d = Math.hypot(dx, dy);
-        if (d >= gap) continue;
-        if (d < 0.001) { dx = Math.cos(i + j); dy = Math.sin(i + j); d = 1; }
-        const k = (gap - d) / 2 + 0.3;
-        pts[i] = L.point(pts[i].x - dx / d * k, pts[i].y - dy / d * k);
-        pts[j] = L.point(pts[j].x + dx / d * k, pts[j].y + dy / d * k);
-        bouge = true;
-      }
-      if (!bouge) break;
-      for (let i = 0; i < pts.length; i++) pts[i] = L.point(pts[i].x + (cibles[i].x - pts[i].x) * 0.15, pts[i].y + (cibles[i].y - pts[i].y) * 0.15);
-    }
-    return pts.map(pt => map.unproject(pt, zoom));
-  }
+  // Points à leur position exacte (adresse au registre SIRENE, sinon centre de
+  // la commune — voir le champ « precision » de data/projets.json). Aucun
+  // déplacement : des points voisins peuvent se superposer, le liseré blanc
+  // les distingue et le nombre par région donne le compte.
   function dessinerPoints(map, couche, liste, tailleMin) {
     couche.clearLayers();
     // Taille du point proportionnelle à la largeur de la carte (lisible partout).
-    const taille = Math.max(tailleMin || 7, Math.min(14, Math.round(map.getSize().x / 95)));
-    placer(map, liste, taille).forEach(ll => L.marker(ll, {
+    const taille = Math.max(tailleMin || 6, Math.min(11, Math.round(map.getSize().x / 120)));
+    liste.forEach(p => L.marker([p.lat, p.lng], {
       interactive: false, keyboard: false,
       icon: L.divIcon({ className: '', html: '<div class="point"></div>', iconSize: [taille, taille], iconAnchor: [taille / 2, taille / 2] })
     }).addTo(couche));
   }
+  // Le NOMBRE est posé sur un point intérieur à la région (data.ancres_regions,
+  // calculé loin des frontières et des points) ; le nom de la région au-dessus.
   function etiquette(nom) {
     const n = parRegion[nom] || 0;
-    return (NOMS_COURTS[nom] || nom) + (n ? ` <span class="nb">${n}</span>` : '');
+    const libelle = NOMS_COURTS[nom] || nom;
+    // Île-de-France : les points de Paris sont juste au-dessus du nombre → nom en dessous.
+    const dessous = NOM_DESSOUS.includes(nom) ? ' rl-dessous' : '';
+    return n ? `<span class="nb">${n}</span><span class="rl-nom${dessous}">${libelle}</span>` : `<span class="rl-seul">${libelle}</span>`;
   }
 
   // ── Métropole ──────────────────────────────────────────────────────────────
@@ -220,7 +195,8 @@
   map.createPane('etiquettes').style.zIndex = 590;
   coucheMetro.eachLayer(l => {
     const nom = l.feature.properties.nom;
-    const pos = POS_ETIQUETTE[nom] ? L.latLng(POS_ETIQUETTE[nom]) : l.getBounds().getCenter();
+    const a = (data.ancres_regions || {})[nom];
+    const pos = a ? L.latLng(a) : l.getBounds().getCenter();
     L.marker(pos, {
       interactive: false, keyboard: false, pane: 'etiquettes',
       icon: L.divIcon({ className: '', iconSize: null, html: `<div class="region-label">${etiquette(nom)}</div>` })
@@ -254,8 +230,8 @@
     encarts.push(() => {
       mini.invalidateSize();
       mini.fitBounds(forme.getBounds(), { padding: [6, 6], animate: false });
-      // Encarts : la carte de France vaut ~4 fois leur largeur → même taille de point.
-      dessinerPoints(mini, couche, liste, Math.max(8, Math.min(14, Math.round(map.getSize().x / 95))));
+      // Encarts : même taille de point que la métropole.
+      dessinerPoints(mini, couche, liste, Math.max(6, Math.min(11, Math.round(map.getSize().x / 120))));
     });
   });
 
