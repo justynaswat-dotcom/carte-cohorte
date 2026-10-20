@@ -24,7 +24,9 @@
   html, body { margin: 0; height: 100%; background: transparent; }
   body { font-family: 'DM Sans', system-ui, sans-serif; }
   .carte {
-    position: relative; width: 100%; aspect-ratio: 16 / 9; max-height: 100vh;
+    /* La carte remplit le cadre qui l'intègre (16:9 sur ordinateur, plus haut sur
+       téléphone) : c'est le bloc HTML de la page hôte qui fixe les proportions. */
+    position: relative; width: 100%; height: 100vh; height: 100dvh;
     background: var(--fond); overflow: hidden; border-radius: 0;
     user-select: none; -webkit-user-select: none;
   }
@@ -79,6 +81,22 @@
     position: absolute; right: 1.5%; bottom: 2%; z-index: 500; color: #8a8780;
     font-size: clamp(7px, .7vw, 10px);
   }
+  /* ── Mode compact (cadre < 640 px de large : téléphones) ─────────────────
+     Légende en bandeau en haut, France sur toute la largeur, encarts Outre-mer
+     côte à côte en dessous, sources tout en bas. Seuls les NOMBRES restent sur
+     les régions : les noms seraient illisibles à cette taille. */
+  .carte.compact { display: flex; flex-direction: column; }
+  .carte.compact #map { position: relative; inset: auto; flex: 1; min-height: 0; }
+  .carte.compact .legende {
+    position: static; order: -1; font-size: 11px; padding: 8px 10px; gap: 4px 8px;
+    grid-template-columns: auto 1fr auto 1fr; background: #fff; border-bottom: 1px solid #ebe8e2;
+  }
+  .carte.compact .legende-note { padding-top: 4px; }
+  .carte.compact .encarts { position: static; height: 21%; min-height: 96px; padding: 0 8px 4px; gap: 8px; }
+  .carte.compact .encart { flex: 1; aspect-ratio: auto; height: 100%; }
+  .carte.compact .encart-titre { font-size: 10px; padding: 3px 6px; }
+  .carte.compact .source { position: static; text-align: right; padding: 0 8px 4px; font-size: 9px; }
+  .carte.compact .region-label .rl-nom, .carte.compact .region-label .rl-seul { display: none; }
 </style>
 </head>
 <body>
@@ -87,7 +105,7 @@
   <div class="legende" aria-hidden="true">
     <span class="point"></span><span>Projet de la cohorte 2026</span>
     <span class="nb">8</span><span>Nombre de projets par région</span>
-    <span class="legende-note">Cliquez sur une région pour voir ses projets</span>
+    <span class="legende-note" id="legende-note">Cliquez sur une région pour voir ses projets</span>
   </div>
   <div class="encarts" id="encarts"></div>
   <div class="source">Relief et contours : IGN · Etalab</div>
@@ -205,15 +223,25 @@
   });
   const points = L.layerGroup().addTo(map);
   const projetsMetro = projets.filter(p => !OUTRE_MER.includes(p.region));
+  const carteEl = document.getElementById('carte');
+  if (window.matchMedia && matchMedia('(hover: none)').matches) document.getElementById('legende-note').textContent = 'Touchez une région pour voir ses projets';
   function cadrer() {
+    const compact = carteEl.clientWidth < 640;
+    carteEl.classList.toggle('compact', compact);
     map.invalidateSize();
     // Étiquettes proportionnelles à la largeur de la carte : leur emplacement a été
     // calculé pour 11 px à 1450 px de large, la mise en page reste donc identique
     // quelle que soit la taille du cadre qui intègre la carte.
-    document.documentElement.style.setProperty('--taille-etiquette', Math.max(5.5, Math.min(12, map.getSize().x * 11 / 1450)) + 'px');
-    // Marge à gauche pour le titre et les encarts Outre-mer.
+    // (en mode compact, seul le nombre reste affiché : taille lisible au doigt.)
     const w = map.getSize().x;
-    map.fitBounds(coucheMetro.getBounds(), { paddingTopLeft: [w * 0.12, 20], paddingBottomRight: [w * 0.04, 14], animate: false });
+    document.documentElement.style.setProperty('--taille-etiquette',
+      (compact ? 9 : Math.max(5.5, Math.min(12, w * 11 / 1450))) + 'px');
+    if (compact) {
+      map.fitBounds(coucheMetro.getBounds(), { padding: [10, 10], animate: false });
+    } else {
+      // Marge à gauche pour la légende et les encarts Outre-mer.
+      map.fitBounds(coucheMetro.getBounds(), { paddingTopLeft: [w * 0.12, 20], paddingBottomRight: [w * 0.04, 14], animate: false });
+    }
     dessinerPoints(map, points, projetsMetro);
   }
 
@@ -240,7 +268,7 @@
     });
   });
 
-  const tout = () => { cadrer(); encarts.forEach(f => f()); };
+  const tout = () => { cadrer(); requestAnimationFrame(() => encarts.forEach(f => f())); };
   tout();
   let t;
   new ResizeObserver(() => { clearTimeout(t); t = setTimeout(tout, 120); }).observe(document.getElementById('carte'));
